@@ -4,7 +4,10 @@ var io = require('socket.io')(http);
 
 
 io.on('connection', function(socket){
-    console.log("nodo");
+    socket.on('room', function(room) {
+      socket.join(room);
+      io.sockets.in(room).emit('joined', room);
+    });
   });
 
 
