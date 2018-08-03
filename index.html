@@ -11,10 +11,15 @@
                 var user = $("#user").val()
                 console.log({'room':room, 'user':user})
                 var socket = io.connect();
-                
+
                 socket.on('connect', function() {
                     // Connected, let's sign-up for to receive messages for this room
                     socket.emit('room', room);
+                });
+
+                socket.on('full', function(data) {
+                    // Connected, let's sign-up for to receive messages for this room
+                    alert(data)
                 });
 
                 socket.on('joined',function(room){
