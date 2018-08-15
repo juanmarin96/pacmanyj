@@ -164,6 +164,7 @@ jQuery(function($){
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
             App.$hostGame = $('#host-game-template').html();
+            App.$canvas = $('#canvas-template').html();
         },
 
         /**
@@ -511,8 +512,10 @@ jQuery(function($){
              */
             gameCountdown : function(hostData) {
                 App.Player.hostSocketId = hostData.mySocketId;
-                $('#gameArea')
-                    .html('<div class="gameOver">Get Ready!</div>');
+                console.log(App.$canvas);
+                $('#gameArea').html(App.$canvas);
+                initCanvas();
+                pintarMacro();
             },
 
             /**
