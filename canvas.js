@@ -6,7 +6,7 @@ function initCanvas(){
     this.ctx = canvas.getContext("2d") 
 }
 
-function pintarMacro(){
+function pintarEscenario(){
     this.ctx.moveTo(0, 0);
     this.ctx.lineTo(200, 100);
     this.ctx.stroke();
