@@ -6,6 +6,7 @@
     "load-grunt-tasks": "~0.2.0"
   },
   "dependencies": {
+    "amazejs": "^1.0.2",
     "express": "^4.16.3",
     "nodemon": "^1.18.3",
     "socket.io": "^2.1.1"

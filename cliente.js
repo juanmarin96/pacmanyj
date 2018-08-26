@@ -512,10 +512,8 @@ jQuery(function($){
              */
             gameCountdown : function(hostData) {
                 App.Player.hostSocketId = hostData.mySocketId;
-                console.log(App.$canvas);
                 $('#gameArea').html(App.$canvas);
-                initCanvas();
-                pintarMacro();
+                inicializarLaberintos();
             },
 
             /**
