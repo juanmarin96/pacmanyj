@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script  src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">     
+
 </head>
 
 <body>
@@ -22,24 +25,17 @@
     </div>
 
     <!-- Main Title Screen that appears when the page loads for the first time -->
-    <script id="intro-screen-template" type="text/template">
+    <script id="intro-screen-template" type="text/template">   
 
         <div class="titleWrapper">
-
             <div class="title">
-                ANAGRAMMATIX
-            </div>
+                ----- LABERINTOS -----
+            </div> 
 
             <div class="buttons">
-
-                <button id="btnCreateGame" class="btn left">CREATE</button>
-                <button id="btnJoinGame" class="btn right">JOIN</button>
-                <div style="clear:both"></div>
-                <div id="mid">
-                <input class="btn" type="button" value="LEADER BOARD" id="leaderboard">
-                </div>
+                <button id="btnCreateGame" class="waves-effect waves-light btn-large" class="btn left">CREATE<i class="material-icons left">create</i></button>
+                <button id="btnJoinGame" class="waves-effect waves-light btn-large" class="btn right">JOIN<i class="material-icons left">add_circle</i></button>
             </div>
-
         </div>
 
     </script>
@@ -47,13 +43,12 @@
     <!-- This screen appears when a user clicks "CREATE" on the Title Screen -->
     <script id="create-game-template" type="text/template">
         <div class="createGameWrapper">
-
+            <div class="rayitas">-------------------------------------------------------------------------------------</div>
             <div class="info">Open this site on your mobile device:</div>
             <div id="gameURL" class="infoBig">Error!</div>
-
             <div class="info">Then click <strong>JOIN</strong> and <br/> enter the following Game ID:</div>
             <div id="spanNewGameCode" class="gameId">Error!</div>
-
+            <div class="rayitas">-------------------------------------------------------------------------------------</div>
             <div id="playersWaiting"></div>
         </div>
     </script>
@@ -62,17 +57,15 @@
     <script id="join-game-template" type="text/template">
         <div class="joinGameWrapper">
             <div class="info">
-                <label for="inputPlayerName">Your Name:</label>
-                <input id="inputPlayerName" type="text" />
+                <label for="inputPlayerName" class="inputLetras">Your Name:</label>
+                <input id="inputPlayerName" type="text" class="inputDatos"/>
             </div>
-
             <div class="info">
-                <label for="inputGameId">Game ID:</label>
-                <input id="inputGameId" type="text"/>
+                <label for="inputGameId" class="inputLetras">Game ID:</label>
+                <input id="inputGameId" type="text" class="inputDatos"/>
             </div>
-
             <div class="info buttons">
-                <button id="btnStart" class="btn">Start</button>
+                <button id="btnStart" class="waves-effect waves-light btn-large">Start<i class="material-icons left">forward</i></button>
                 <div id="playerWaitingMessage"></div>
             </div>
         </div>
