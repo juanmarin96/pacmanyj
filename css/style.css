@@ -1,5 +1,5 @@
 html, body {
-    background-color: #78BD4C;
+    background-color: #333;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -17,7 +17,7 @@ html, body {
     font-size: 2em;
     line-height: 1.2;
     text-align: center;
-    background-color: #8AD453;
+    background-color: #4db6ac;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
@@ -57,12 +57,14 @@ html, body {
 }
 
 #gameArea {
+    background: #333;
     height: 100%;
     width: 100%;
 }
 
 .titleWrapper {
     font-family: 'Quicksand', sans-serif;
+    background: #333;
     font-weight: 400;
     position: absolute;
     height: 50%;
@@ -77,9 +79,10 @@ html, body {
 .title {
     margin: 0px auto;
     text-align: center;
+    font-size: 100px;
+    font-weight: bolder;
     width: 100%;
-    font-family: 'Quicksand', sans-serif;
-    color: #ECFFE0;
+    color: #4db6ac;
     font-weight: 300;
 }
 
@@ -98,7 +101,7 @@ html, body {
     color: #ECFFE0;
     font-weight: 400;
     font-size: 2em;
-    margin-top: 1.5em;
+    margin-top: 30px;
 }
 
 .createGameWrapper{
@@ -125,21 +128,35 @@ html, body {
 }
 
 .info input#inputPlayerName {
-    width: 90%;
+    width: 50%;
+}
+
+.info input#inputGameId {
+    width: 50%;
 }
 
 .joinGameWrapper {
-    margin: 0;
+    margin: 70px;
     padding: 0;
     height: 100%;
     min-height: 320px;
 }
 
 .joinGameWrapper .info {
-    font-size: 1.5em;
+    font-size: 30px !important;
     color: #ECFFE0;
     height: 30%;
     padding-top: 1%;
+}
+
+.joinGameWrapper .info .inputLetras{
+    font-size: 70px !important;
+    color: #A22FB0 !important;
+}
+
+.joinGameWrapper .info .inputDatos{
+    font-size: 60px !important;
+    color: #ECFFE0 !important;
 }
 
 .joinGameWrapper .btn {
@@ -234,7 +251,7 @@ html, body {
 
 .playerScore .score {
     text-align: center;
-    background-color: #A8FF56;
+    background-color: #4db6ac;
 }
 
 .playerScore .playerName {
@@ -263,4 +280,32 @@ html, body {
     height: 10%;
     position: fixed;
     bottom: 0;
+}
+
+#btnCreateGame{
+    font-size: 30px !important;
+    font-weight: bolder !important;
+    height: 100px !important;
+    margin-left: 70px !important;
+    width: 300px !important;
+}
+
+#btnJoinGame{
+    font-size: 30px !important;
+    font-weight: bolder !important;
+    height: 100px !important;
+    margin-right: 70px !important;
+    width: 300px !important;
+}
+
+.rayitas{
+    color: #4db6ac;
+    font-size: 50px;
+}
+
+#btnStart{
+    font-size: 30px !important;
+    font-weight: bolder !important;
+    height: 100px !important;
+    width: 300px !important;
 }
