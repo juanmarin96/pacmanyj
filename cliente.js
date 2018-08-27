@@ -1,26 +1,13 @@
 jQuery(function($){    
     'use strict';
 
-    /**
-     * All the code relevant to Socket.IO is collected in the IO namespace.
-     *
-     * @type {{init: Function, bindEvents: Function, onConnected: Function, onNewGameCreated: Function, playerJoinedRoom: Function, beginNewGame: Function, onNewWordData: Function, hostCheckAnswer: Function, gameOver: Function, error: Function}}
-     */
     var IO = {
 
-        /**
-         * This is called when the page is displayed. It connects the Socket.IO client
-         * to the Socket.IO server
-         */
         init: function() {
-            IO.socket = io();
+            IO.socket =  io.connect();
             IO.bindEvents();
         },
 
-        /**
-         * While connected, Socket.IO will listen to the following events emitted
-         * by the Socket.IO server, then run the appropriate function.
-         */
         bindEvents : function() {
             IO.socket.on('connected', IO.onConnected );
             IO.socket.on('newGameCreated', IO.onNewGameCreated );
@@ -28,23 +15,15 @@ jQuery(function($){
             IO.socket.on('beginNewGame', IO.beginNewGame );
             IO.socket.on('newWordData', IO.onNewWordData);
             IO.socket.on('hostCheckAnswer', IO.hostCheckAnswer);
+            IO.socket.on('hostCheckMove', IO.hostCheckMove);
             IO.socket.on('gameOver', IO.gameOver);
             IO.socket.on('error', IO.error );
         },
 
-        /**
-         * The client is successfully connected!
-         */
         onConnected : function() {
-            // Cache a copy of the client's socket.IO session ID on the App
-            App.mySocketId = IO.socket.socket.sessionid;
-            // console.log(data.message);
+            App.mySocketId = IO.socket.id;
         },
 
-        /**
-         * A new game has been created and a random game ID has been generated.
-         * @param data {{ gameId: int, mySocketId: * }}
-         */
         onNewGameCreated : function(data) {
             App.Host.gameInit(data);
         },
@@ -91,6 +70,10 @@ jQuery(function($){
             if(App.myRole === 'Host') {
                 App.Host.checkAnswer(data);
             }
+        },
+
+        hostCheckMove : function(data) {
+            App.Player.checkMove(data);
         },
 
         /**
@@ -179,6 +162,7 @@ jQuery(function($){
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
             App.$doc.on('click', '.btnAnswer',App.Player.onPlayerAnswerClick);
             App.$doc.on('click', '#btnPlayerRestart', App.Player.onPlayerRestart);
+            App.$doc.on('keyup','body',App.Player.onPlayerKeyUp);
         },
 
         /* *************************************
@@ -226,7 +210,6 @@ jQuery(function($){
              * Handler for the "Start" button on the Title Screen.
              */
             onCreateClick: function () {
-                // console.log('Clicked "Create A Game"');
                 IO.socket.emit('hostCreateNewGame');
             },
 
@@ -272,7 +255,8 @@ jQuery(function($){
                 $('#playersWaiting')
                     .append('<p/>')
                     .text('Player ' + data.playerName + ' joined the game.');
-
+                data.row = 1;
+                data.col = 1;
                 // Store the new player's data on the Host.
                 App.Host.players.push(data);
 
@@ -368,7 +352,32 @@ jQuery(function($){
                 }
             },
 
-
+            checkMove : function(data){
+                var indexPlayer =  App.Host.players.findIndex(x => x.mySocketId==data.playerId);
+                var codeKey = data.codigoTecla;
+                console.log(data);
+                console.log(App.Host.players);
+                var player = App.Host.players[indexPlayer];
+                console.log(player)
+                switch(codeKey){
+                    case 38:
+                        player.row +=1
+                        break;
+                    case 40:
+                        player.row -=1
+                        break;
+                    case 37:
+                        player.col -= 1
+                        break;
+                    case 39:
+                        player.col += 1
+                        break;
+                    default:
+                    event.preventDefault();
+            }
+            pintarUbicacionActualJugador(player.row, player.col ,indexPlayer+1)
+        }
+            ,
             /**
              * All 10 rounds have played out. End the game.
              * @param data
@@ -427,6 +436,10 @@ jQuery(function($){
              */
             myName: '',
 
+            row: 1,
+
+            col: 1,
+
             /**
              * Click handler for the 'JOIN' button
              */
@@ -449,7 +462,7 @@ jQuery(function($){
                     gameId : +($('#inputGameId').val()),
                     playerName : $('#inputPlayerName').val() || 'anon'
                 };
-                
+                console.log(data)
                 // Send the gameId and playerName to the server
                 IO.socket.emit('playerJoinGame', data);
 
@@ -457,6 +470,32 @@ jQuery(function($){
                 App.myRole = 'Player';
                 App.Player.myName = data.playerName;
             },
+
+            checkMove : function(data){
+                var indexPlayer =  App.Host.players.findIndex(x => x.mySocketId==data.playerId);
+                var codeKey = data.codigoTecla;
+                console.log(data);
+                console.log(App.Host.players);
+                var player = App.Host.players[indexPlayer];
+                console.log(player)
+                switch(codeKey){
+                    case 38:
+                        player.row +=1
+                        break;
+                    case 40:
+                        player.row -=1
+                        break;
+                    case 37:
+                        player.col -= 1
+                        break;
+                    case 39:
+                        player.col += 1
+                        break;
+                    default:
+                    event.preventDefault();
+            }
+            pintarUbicacionActualJugador(player.row, player.col ,indexPlayer+1)
+        },
 
             /**
              *  Click handler for the Player hitting a word in the word list.
@@ -491,12 +530,26 @@ jQuery(function($){
                 $('#gameArea').html("<h3>Waiting on host to start new game.</h3>");
             },
 
+            onPlayerKeyUp: function(event){
+                if(App.myRole === 'Player'){
+                    var data = {
+                        gameId: App.gameId,
+                        playerId: App.mySocketId,
+                        codigoTecla: event.code,
+                        row: this.row,
+                        col: this.col
+                    };
+                    console.log('env :'+ JSON.stringify(data))
+                    IO.socket.emit('playerKeyUp',data);
+                }
+            },
+
             /**
              * Display the waiting screen for player 1
              * @param data
              */
             updateWaitingScreen : function(data) {
-                if(IO.socket.sessionid === data.mySocketId){
+                if(IO.socket.id === data.mySocketId){
                     App.myRole = 'Player';
                     App.gameId = data.gameId;
 

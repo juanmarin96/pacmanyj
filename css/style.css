@@ -288,6 +288,10 @@ html, body {
     bottom: 0;
 }
 
+canvas{
+    z-index: 200;
+}
+
 #btnCreateGame{
     font-size: 30px !important;
     font-weight: bolder !important;
