@@ -28,7 +28,7 @@ function inicializarLaberintos(){
 
 function pintarLaberinto(laberinto, ctx){
     var size = 20;
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#ECFFE0';
     for(var row = 0; row < laberinto.height; row++) {
         for(var col = 0; col < laberinto.width; col++) {
           if(laberinto.get(row, col)) {
@@ -46,7 +46,7 @@ function pintarLaberinto(laberinto, ctx){
 function pintarUbicacionActualJugador(r,c,j){
     if(j === 1){
         if(l1.get(r, c)) {
-            ctx1.fillStyle = "white";
+            ctx1.fillStyle = "#4db6ac";
             ctx1.fillRect(ubicacionActual1.c * 20, ubicacionActual1.r * 20, 20, 20);
             ubicacionActual1.r = r;
             ubicacionActual1.c = c;
@@ -55,7 +55,7 @@ function pintarUbicacionActualJugador(r,c,j){
           }
     }else{
         if(l2.get(r, c)) {
-            ctx2.fillStyle = "white";
+            ctx2.fillStyle = "#4db6ac";
             ctx2.fillRect(ubicacionActual2.c * 20, ubicacionActual2.r * 20, 20, 20);
             ubicacionActual2.r = r;
             ubicacionActual2.c = c;
