@@ -8,7 +8,6 @@ var ubicacionActual2 = {r:1,c:1}
 function inicializarLaberintos(){
     var canvas1 = document.getElementById('canvas1');
     var canvas2 = document.getElementById('canvas2');
-
     ctx1 = canvas1.getContext('2d');
     ctx2 = canvas2.getContext('2d');
     l1 = new maze.Backtracker(15, 25);
@@ -63,6 +62,21 @@ function pintarUbicacionActualJugador(r,c,j){
             ctx2.fillRect(c * 20, r * 20, 20, 20);
             console.log(ubicacionActual2)
           }
+    }
+}
+
+function validarMovimiento(code){
+    switch(code){
+        case 38:
+            break;
+        case 40:
+            break;
+        case 37:
+            break;
+        case 39:
+            break;
+        default:
+        event.preventDefault();
     }
 }
 
