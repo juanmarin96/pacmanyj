@@ -258,7 +258,7 @@ jQuery(function($){
             playerWin : function(data){
                 var $pScore = $('#' + data.playerId);
                 $pScore.text( +$pScore.text() + 1 );
-                if($pScore.text() == 1){
+                if($pScore.text() == 3){
                     IO.socket.emit('gameOver',{gameId:App.gameId});
                 }else{
                     IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players,nextRound:true});
