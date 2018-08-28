@@ -368,6 +368,10 @@ jQuery(function($){
 
             col: 1,
 
+            lab1: null,
+
+            lab2: null,
+
             /**
              * Click handler for the 'JOIN' button
              */
@@ -399,11 +403,9 @@ jQuery(function($){
             },
 
             checkMove : function(data){
-                console.log("Retorno");
-                console.log(data)
                 this.row = data.row;
                 this.col = data.col;
-                pintarUbicacionActualJugador(data.row, data.col ,1)
+                pintarUbicacionActualJugador(data.row, data.col ,2)
         },
 
             /**
@@ -440,7 +442,6 @@ jQuery(function($){
             },
 
             onPlayerKeyUp: function(event){
-                console.log(event)
                 if(App.myRole === 'Player'){
                     var data = {
                         gameId: App.gameId,
@@ -448,10 +449,10 @@ jQuery(function($){
                         codigoTecla: event.keyCode,
                         row: App.Player.row,
                         col: App.Player.col,
-                        j : 1
+                        j : 2,
+                        lab1 : App.Player.lab1,
+                        lab2: App.Player.lab2
                     };
-                    console.log("Enviando")
-                    console.log(data);
                     IO.socket.emit('playerKeyUp',data);
                 }
             },
@@ -476,9 +477,10 @@ jQuery(function($){
              * @param hostData
              */
             gameCountdown : function(hostData) {
-                var juan = Object.create(hostData.lab1)
                 App.Player.hostSocketId = hostData.mySocketId;
                 $('#gameArea').html(App.$canvas);
+                App.Player.lab1 = hostData.lab1;
+                App.Player.lab2 = hostData.lab2;
                 inicializarLaberintos(hostData.lab1, hostData.lab2);
             },
 

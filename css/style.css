@@ -328,5 +328,9 @@ canvas{
 }
 
 .laberintosCanvas{
-    margin-top: 100px !important;
+    margin-top: 70px !important;
+}
+
+body{
+    overflow-y: hidden;
 }

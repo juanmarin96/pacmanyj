@@ -1,8 +1,6 @@
 var io;
 var gameSocket;
 var maze = require('amazejs');
-var l1;
-var l2;
 exports.iniciarJuego = function (sio, socket) {
   io = sio;
   gameSocket = socket;
@@ -35,10 +33,11 @@ function hostCreateNewGame(data) {
 }
 
 function hostPrepareGame(gameId) {
+  console.log("Juego preparado");
   var sock = this;
-  l1 = new maze.Backtracker(15, 25);
+  var l1 = new maze.Backtracker(15, 25);
   l1.generate();
-  l2 = new maze.Backtracker(15, 25);
+  var l2 = new maze.Backtracker(15, 25);
   l2.generate();
   var data = {
     mySocketId: sock.id,
@@ -99,7 +98,10 @@ function validarMovimientoJugador(data) {
 }
 
 function validarPosicionEnLaberinto(data) {
-  console.log(data)
+    var l1 = new maze.Backtracker(data.lab1.width, data.lab1.height);
+    l1 = Object.assign(l1,data.lab1);
+    var l2 = new maze.Backtracker(data.lab2.width, data.lab2.height);
+    l2 = Object.assign(l2,data.lab2);
   if (data.j === 1) {
     if (l1.get(data.row, data.col)) {
       return true;
