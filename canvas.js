@@ -42,24 +42,19 @@ function pintarLaberinto(laberinto, ctx){
 
 function pintarUbicacionActualJugador(r,c,j){
     if(j === 1){
-        if(l1.get(r, c)) {
             ctx1.fillStyle = "#4db6ac";
             ctx1.fillRect(ubicacionActual1.c * 20, ubicacionActual1.r * 20, 20, 20);
             ubicacionActual1.r = r;
             ubicacionActual1.c = c;
             ctx1.fillStyle = "blue";
             ctx1.fillRect(c * 20, r * 20, 20, 20);
-          }
     }else{
-        if(l2.get(r, c)) {
             ctx2.fillStyle = "#4db6ac";
             ctx2.fillRect(ubicacionActual2.c * 20, ubicacionActual2.r * 20, 20, 20);
             ubicacionActual2.r = r;
             ubicacionActual2.c = c;
             ctx2.fillStyle = "yellow";
             ctx2.fillRect(c * 20, r * 20, 20, 20);
-            console.log(ubicacionActual2)
-          }
     }
 }
 

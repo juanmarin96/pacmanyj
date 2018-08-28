@@ -14,7 +14,6 @@ jQuery(function($){
             IO.socket.on('playerJoinedRoom', IO.playerJoinedRoom );
             IO.socket.on('beginNewGame', IO.beginNewGame );
             IO.socket.on('newWordData', IO.onNewWordData);
-            IO.socket.on('hostCheckAnswer', IO.hostCheckAnswer);
             IO.socket.on('hostCheckMove', IO.hostCheckMove);
             IO.socket.on('gameOver', IO.gameOver);
             IO.socket.on('error', IO.error );
@@ -62,18 +61,10 @@ jQuery(function($){
             App[App.myRole].newWord(data);
         },
 
-        /**
-         * A player answered. If this is the host, check the answer.
-         * @param data
-         */
-        hostCheckAnswer : function(data) {
-            if(App.myRole === 'Host') {
-                App.Host.checkAnswer(data);
-            }
-        },
-
         hostCheckMove : function(data) {
-            App.Player.checkMove(data);
+            if(App.myRole === 'Player'){
+                App.Player.checkMove(data);
+            }
         },
 
         /**
@@ -316,69 +307,6 @@ jQuery(function($){
             },
 
             /**
-             * Check the answer clicked by a player.
-             * @param data{{round: *, playerId: *, answer: *, gameId: *}}
-             */
-            checkAnswer : function(data) {
-                // Verify that the answer clicked is from the current round.
-                // This prevents a 'late entry' from a player whos screen has not
-                // yet updated to the current round.
-                if (data.round === App.currentRound){
-
-                    // Get the player's score
-                    var $pScore = $('#' + data.playerId);
-
-                    // Advance player's score if it is correct
-                    if( App.Host.currentCorrectAnswer === data.answer ) {
-                        // Add 5 to the player's score
-                        $pScore.text( +$pScore.text() + 5 );
-
-                        // Advance the round
-                        App.currentRound += 1;
-
-                        // Prepare data to send to the server
-                        var data = {
-                            gameId : App.gameId,
-                            round : App.currentRound
-                        }
-
-                        // Notify the server to start the next round.
-                        IO.socket.emit('hostNextRound',data);
-
-                    } else {
-                        // A wrong answer was submitted, so decrement the player's score.
-                        $pScore.text( +$pScore.text() - 3 );
-                    }
-                }
-            },
-
-            checkMove : function(data){
-                var indexPlayer =  App.Host.players.findIndex(x => x.mySocketId==data.playerId);
-                var codeKey = data.codigoTecla;
-                console.log(data);
-                console.log(App.Host.players);
-                var player = App.Host.players[indexPlayer];
-                console.log(player)
-                switch(codeKey){
-                    case 38:
-                        player.row +=1
-                        break;
-                    case 40:
-                        player.row -=1
-                        break;
-                    case 37:
-                        player.col -= 1
-                        break;
-                    case 39:
-                        player.col += 1
-                        break;
-                    default:
-                    event.preventDefault();
-            }
-            pintarUbicacionActualJugador(player.row, player.col ,indexPlayer+1)
-        }
-            ,
-            /**
              * All 10 rounds have played out. End the game.
              * @param data
              */
@@ -462,7 +390,6 @@ jQuery(function($){
                     gameId : +($('#inputGameId').val()),
                     playerName : $('#inputPlayerName').val() || 'anon'
                 };
-                console.log(data)
                 // Send the gameId and playerName to the server
                 IO.socket.emit('playerJoinGame', data);
 
@@ -472,27 +399,11 @@ jQuery(function($){
             },
 
             checkMove : function(data){
-                var indexPlayer =  App.Host.players.findIndex(x => x.mySocketId==data.playerId);
-                var codeKey = data.codigoTecla;
-                var player = App.Host.players[indexPlayer];
-                console.log(App.Host.players)
-                switch(codeKey){
-                    case 38:
-                        player.row +=1
-                        break;
-                    case 40:
-                        player.row -=1
-                        break;
-                    case 37:
-                        player.col -= 1
-                        break;
-                    case 39:
-                        player.col += 1
-                        break;
-                    default:
-                    event.preventDefault();
-            }
-            pintarUbicacionActualJugador(player.row, player.col ,indexPlayer+1)
+                console.log("Retorno");
+                console.log(data)
+                this.row = data.row;
+                this.col = data.col;
+                pintarUbicacionActualJugador(data.row, data.col ,1)
         },
 
             /**
@@ -529,14 +440,18 @@ jQuery(function($){
             },
 
             onPlayerKeyUp: function(event){
+                console.log(event)
                 if(App.myRole === 'Player'){
                     var data = {
                         gameId: App.gameId,
                         playerId: App.mySocketId,
-                        codigoTecla: event.keycode,
+                        codigoTecla: event.keyCode,
                         row: App.Player.row,
-                        col: App.Player.col
+                        col: App.Player.col,
+                        j : 1
                     };
+                    console.log("Enviando")
+                    console.log(data);
                     IO.socket.emit('playerKeyUp',data);
                 }
             },
@@ -561,9 +476,7 @@ jQuery(function($){
              * @param hostData
              */
             gameCountdown : function(hostData) {
-                console.log("Inicio el juego")
                 var juan = Object.create(hostData.lab1)
-                console.log(juan);
                 App.Player.hostSocketId = hostData.mySocketId;
                 $('#gameArea').html(App.$canvas);
                 inicializarLaberintos(hostData.lab1, hostData.lab2);
