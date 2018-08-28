@@ -59,27 +59,4 @@ function pintarUbicacionActualJugador(r,c,j){
     }
 }
 
-function validarMovimiento(code){
-    switch(code){
-        case 38:
-            break;
-        case 40:
-            break;
-        case 37:
-            break;
-        case 39:
-            break;
-        default:
-        event.preventDefault();
-    }
-}
-
-function getl(r,c,grid){
-
-}
-
-function setl(r,c,grid,v){
-
-}
-
 

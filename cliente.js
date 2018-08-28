@@ -13,7 +13,6 @@ jQuery(function($){
             IO.socket.on('newGameCreated', IO.onNewGameCreated );
             IO.socket.on('playerJoinedRoom', IO.playerJoinedRoom );
             IO.socket.on('beginNewGame', IO.beginNewGame );
-            IO.socket.on('newWordData', IO.onNewWordData);
             IO.socket.on('hostCheckMove', IO.hostCheckMove);
             IO.socket.on('gameOver', IO.gameOver);
             IO.socket.on('error', IO.error );
@@ -47,18 +46,6 @@ jQuery(function($){
          */
         beginNewGame : function(data) {
             App[App.myRole].gameCountdown(data);
-        },
-
-        /**
-         * A new set of words for the round is returned from the server.
-         * @param data
-         */
-        onNewWordData : function(data) {
-            // Update the current round
-            App.currentRound = data.round;
-
-            // Change the word for the Host and Player
-            App[App.myRole].newWord(data);
         },
 
         hostCheckMove : function(data) {
@@ -151,7 +138,6 @@ jQuery(function($){
             // Player
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
-            App.$doc.on('click', '.btnAnswer',App.Player.onPlayerAnswerClick);
             App.$doc.on('click', '#btnPlayerRestart', App.Player.onPlayerRestart);
             App.$doc.on('keyup','body',App.Player.onPlayerKeyUp);
         },
@@ -293,20 +279,6 @@ jQuery(function($){
             },
 
             /**
-             * Show the word for the current round on screen.
-             * @param data{{round: *, word: *, answer: *, list: Array}}
-             */
-            newWord : function(data) {
-                // Insert the new word into the DOM
-                $('#hostWord').text(data.word);
-                
-
-                // Update the data for the current round
-                App.Host.currentCorrectAnswer = data.answer;
-                App.Host.currentRound = data.round;
-            },
-
-            /**
              * All 10 rounds have played out. End the game.
              * @param data
              */
@@ -409,25 +381,6 @@ jQuery(function($){
         },
 
             /**
-             *  Click handler for the Player hitting a word in the word list.
-             */
-            onPlayerAnswerClick: function() {
-                // console.log('Clicked Answer Button');
-                var $btn = $(this);      // the tapped button
-                var answer = $btn.val(); // The tapped word
-
-                // Send the player info and tapped word to the server so
-                // the host can check the answer.
-                var data = {
-                    gameId: App.gameId,
-                    playerId: App.mySocketId,
-                    answer: answer,
-                    round: App.currentRound
-                }
-                IO.socket.emit('playerAnswer',data);
-            },
-
-            /**
              *  Click handler for the "Start Again" button that appears
              *  when a game is over.
              */
@@ -482,32 +435,6 @@ jQuery(function($){
                 App.Player.lab1 = hostData.lab1;
                 App.Player.lab2 = hostData.lab2;
                 inicializarLaberintos(hostData.lab1, hostData.lab2);
-            },
-
-            /**
-             * Show the list of words for the current round.
-             * @param data{{round: *, word: *, answer: *, list: Array}}
-             */
-            newWord : function(data) {
-                // Create an unordered list element
-                var $list = $('<ul/>').attr('id','ulAnswers');
-
-                // Insert a list item for each word in the word list
-                // received from the server.
-                $.each(data.list, function(){
-                    $list                                //  <ul> </ul>
-                        .append( $('<li/>')              //  <ul> <li> </li> </ul>
-                            .append( $('<button/>')      //  <ul> <li> <button> </button> </li> </ul>
-                                .addClass('btnAnswer')   //  <ul> <li> <button class='btnAnswer'> </button> </li> </ul>
-                                .addClass('btn')         //  <ul> <li> <button class='btnAnswer'> </button> </li> </ul>
-                                .val(this)               //  <ul> <li> <button class='btnAnswer' value='word'> </button> </li> </ul>
-                                .html(this)              //  <ul> <li> <button class='btnAnswer' value='word'>word</button> </li> </ul>
-                            )
-                        )
-                });
-
-                // Insert the list onto the screen.
-                $('#gameArea').html($list);
             },
 
             /**
