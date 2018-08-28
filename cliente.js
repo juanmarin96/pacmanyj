@@ -245,10 +245,10 @@ jQuery(function($){
                     // console.log('Room is full. Almost ready!');
 
                     // Let the server know that two players are present.
-                    IO.socket.emit('hostRoomFull',App.gameId);
+                    IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players});
                 }
             },
-
+            
             /**
              * Show the countdown screen
              */
@@ -338,6 +338,8 @@ jQuery(function($){
 
             row: 1,
 
+            index: 0,
+
             col: 1,
 
             lab1: null,
@@ -375,9 +377,11 @@ jQuery(function($){
             },
 
             checkMove : function(data){
-                this.row = data.row;
-                this.col = data.col;
-                pintarUbicacionActualJugador(data.row, data.col ,2)
+                if(data.playerId === IO.socket.id){
+                    this.row = data.row;
+                    this.col = data.col;
+                }
+                pintarUbicacionActualJugador(data.row, data.col ,data.j)
         },
 
             /**
@@ -402,7 +406,7 @@ jQuery(function($){
                         codigoTecla: event.keyCode,
                         row: App.Player.row,
                         col: App.Player.col,
-                        j : 2,
+                        j : App.Player.index,
                         lab1 : App.Player.lab1,
                         lab2: App.Player.lab2
                     };
@@ -430,10 +434,12 @@ jQuery(function($){
              * @param hostData
              */
             gameCountdown : function(hostData) {
+                var indexPlayer =  hostData.players.findIndex(x => x.mySocketId==IO.socket.id);
                 App.Player.hostSocketId = hostData.mySocketId;
                 $('#gameArea').html(App.$canvas);
                 App.Player.lab1 = hostData.lab1;
                 App.Player.lab2 = hostData.lab2;
+                App.Player.index = indexPlayer + 1;
                 inicializarLaberintos(hostData.lab1, hostData.lab2);
             },
 

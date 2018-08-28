@@ -49,7 +49,6 @@ function pintarUbicacionActualJugador(r,c,j){
             ctx1.fillStyle = "blue";
             ctx1.fillRect(c * 20, r * 20, 20, 20);
     }else{
-            console.log(j)
             ctx2.fillStyle = "#4db6ac";
             ctx2.fillRect(ubicacionActual2.c * 20, ubicacionActual2.r * 20, 20, 20);
             ubicacionActual2.r = r;

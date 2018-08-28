@@ -32,8 +32,7 @@ function hostCreateNewGame(data) {
   this.join(thisGameId.toString());
 }
 
-function hostPrepareGame(gameId) {
-  console.log("Juego preparado");
+function hostPrepareGame(data) {
   var sock = this;
   var l1 = new maze.Backtracker(15, 25);
   l1.generate();
@@ -41,9 +40,10 @@ function hostPrepareGame(gameId) {
   l2.generate();
   var data = {
     mySocketId: sock.id,
-    gameId: gameId,
+    gameId: data.id,
     lab1: l1,
-    lab2: l2
+    lab2: l2,
+    players: data.players
   };
   io.sockets.in(data.gameId).emit('beginNewGame', data);
 }
