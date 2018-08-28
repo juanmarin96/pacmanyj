@@ -14,6 +14,7 @@ exports.iniciarJuego = function (sio, socket) {
   gameSocket.on('hostCountdownFinished', hostStartGame);
   gameSocket.on('hostNextRound', hostNextRound);
   gameSocket.on('playerJoinGame', playerJoinGame);
+  gameSocket.on('gameOver', gameOver);
 
   //PLAYER EVENTS
   gameSocket.on('playerKeyUp', playerKeyUp);
@@ -30,6 +31,11 @@ function hostCreateNewGame(data) {
 
   // Join the Room and wait for the players
   this.join(thisGameId.toString());
+}
+
+
+function gameOver(data){
+  io.sockets.in(data.gameId).emit('endGame', data);
 }
 
 function hostPrepareGame(data) {
@@ -85,6 +91,7 @@ function playerJoinGame(data) {
 function playerKeyUp(data) {
   var retorno = validarMovimientoJugador(data);
   io.sockets.in(data.gameId).emit('hostCheckMove', retorno);
+
 }
 
 function validarMovimientoJugador(data) {
@@ -92,6 +99,7 @@ function validarMovimientoJugador(data) {
   var colAux = data.col;
   moverIndice(data);
   if (validarPosicionEnLaberinto(data)) {
+
     return data;
   } else {
     data.row = rowAux;
@@ -110,8 +118,7 @@ function validarPosicionEnLaberinto(data) {
       if (l1.get(data.row, data.col) === 2) {
         data.row = 1;
         data.col = 1;
-        io.sockets.in(data.gameId).emit('playerWin', data);
-        return true;
+        io.sockets.in(data.gameId).emit('playerWin', data);        
       }
       return true;
     } else {
@@ -123,7 +130,6 @@ function validarPosicionEnLaberinto(data) {
         data.row = 1;
         data.col = 1;
         io.sockets.in(data.gameId).emit('playerWin', data);
-        return true;
       }
       return true;
     } else {

@@ -15,8 +15,7 @@ jQuery(function($){
             IO.socket.on('beginNewGame', IO.beginNewGame );
             IO.socket.on('hostCheckMove', IO.hostCheckMove);
             IO.socket.on('playerWin', IO.onPlayerWin);
-            IO.socket.on('nextLab', IO.nextLab);
-            IO.socket.on('gameOver', IO.gameOver);
+            IO.socket.on('endGame', IO.gameOver);
             
             IO.socket.on('error', IO.error );
         },
@@ -44,13 +43,7 @@ jQuery(function($){
         },
 
         onPlayerWin : function(data){
-            App[App.myRole].playerWin(data);
-        },
-
-        nextLab : function(data){
-            if(App.myRole === 'Player'){
-                App.Player.nextLab(data);
-            }
+            App.Host.playerWin(data);
         },
 
         /**
@@ -72,7 +65,7 @@ jQuery(function($){
          * @param data
          */
         gameOver : function(data) {
-            App[App.myRole].endGame(data);
+            App[App.myRole].endGame();
         },
 
         /**
@@ -265,7 +258,12 @@ jQuery(function($){
             playerWin : function(data){
                 var $pScore = $('#' + data.playerId);
                 $pScore.text( +$pScore.text() + 1 );
-                IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players,nextRound:true});
+                if($pScore.text() == 1){
+                    IO.socket.emit('gameOver',{gameId:App.gameId});
+                }else{
+                    IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players,nextRound:true});
+                }
+                
             },
             
             /**
@@ -273,8 +271,6 @@ jQuery(function($){
              */
             gameCountdown : function(data) {
                 
-
-                console.log(data);
 
                 // Set the Score section on screen to 0 for each player.
                 if(!data.nextRound){
@@ -306,7 +302,7 @@ jQuery(function($){
              * All 10 rounds have played out. End the game.
              * @param data
              */
-            endGame : function(data) {
+            endGame : function() {
                 // Get the data for player 1 from the host screen
                 var $p1 = $('#player1Score');
                 var p1Score = +$p1.find('.score').text();
@@ -354,6 +350,8 @@ jQuery(function($){
              * A reference to the socket ID of the Host
              */
             hostSocketId: '',
+
+            end : false,
 
             /**
              * The player's name entered on the 'Join' screen.
@@ -408,14 +406,6 @@ jQuery(function($){
                 pintarUbicacionActualJugador(data.row, data.col ,data.j)
             },
 
-            nextLab : function(data){
-                
-            },
-
-            playerWin : function(data){
-                
-            },
-
             /**
              *  Click handler for the "Start Again" button that appears
              *  when a game is over.
@@ -468,22 +458,23 @@ jQuery(function($){
             gameCountdown : function(hostData) {
                 var indexPlayer =  hostData.players.findIndex(x => x.mySocketId==IO.socket.id);
                 App.Player.hostSocketId = hostData.mySocketId;
-                $('#gameArea').html(App.$canvas);
                 App.Player.lab1 = hostData.lab1;
                 App.Player.lab2 = hostData.lab2;
                 App.Player.index = indexPlayer + 1;
-                inicializarLaberintos(hostData.lab1, hostData.lab2);
+                if(!App.Player.end){
+                    $('#gameArea').html(App.$canvas);
+                    inicializarLaberintos(hostData.lab1, hostData.lab2);
+                }
+                
             },
 
             /**
              * Show the "Game Over" screen.
              */
             endGame : function() {
-                $('#gameArea')
-                    .html('<div class="gameOver">Game Over!</div>')
-                    .append(
-                        // Create a button to start a new game.
-                        $('<button>Start Again</button>')
+                App.Player.end = true;
+                App.$gameArea.html('<div class="gameOver">Game Over!</div>')
+                .append($('<button>Start Again</button>')
                             .attr('id','btnPlayerRestart')
                             .addClass('btn')
                             .addClass('btnGameOver')
