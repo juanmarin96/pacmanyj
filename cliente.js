@@ -14,7 +14,10 @@ jQuery(function($){
             IO.socket.on('playerJoinedRoom', IO.playerJoinedRoom );
             IO.socket.on('beginNewGame', IO.beginNewGame );
             IO.socket.on('hostCheckMove', IO.hostCheckMove);
+            IO.socket.on('playerWin', IO.onPlayerWin);
+            IO.socket.on('nextLab', IO.nextLab);
             IO.socket.on('gameOver', IO.gameOver);
+            
             IO.socket.on('error', IO.error );
         },
 
@@ -38,6 +41,16 @@ jQuery(function($){
             // So on the 'host' browser window, the App.Host.updateWiatingScreen function is called.
             // And on the player's browser, App.Player.updateWaitingScreen is called.
             App[App.myRole].updateWaitingScreen(data);
+        },
+
+        onPlayerWin : function(data){
+            App[App.myRole].playerWin(data);
+        },
+
+        nextLab : function(data){
+            if(App.myRole === 'Player'){
+                App.Player.nextLab(data);
+            }
         },
 
         /**
@@ -245,15 +258,27 @@ jQuery(function($){
                     // console.log('Room is full. Almost ready!');
 
                     // Let the server know that two players are present.
-                    IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players});
+                    IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players,nextRound:false});
                 }
+            },
+
+            playerWin : function(data){
+                var $pScore = $('#' + data.playerId);
+                $pScore.text( +$pScore.text() + 1 );
+                IO.socket.emit('hostRoomFull',{id:App.gameId,players:App.Host.players,nextRound:true});
             },
             
             /**
              * Show the countdown screen
              */
-            gameCountdown : function() {
+            gameCountdown : function(data) {
+                
 
+                console.log(data);
+
+                // Set the Score section on screen to 0 for each player.
+                if(!data.nextRound){
+                    
                 // Prepare the game screen with new HTML
                 App.$gameArea.html(App.$hostGame);
                 
@@ -263,19 +288,18 @@ jQuery(function($){
                 App.countDown( $secondsLeft, 5, function(){
                     IO.socket.emit('hostCountdownFinished', App.gameId);
                 });
-
-                // Display the players' names on screen
+                    // Display the players' names on screen
                 $('#player1Score')
-                    .find('.playerName')
-                    .html(App.Host.players[0].playerName);
+                .find('.playerName')
+                .html(App.Host.players[0].playerName);
 
-                $('#player2Score')
-                    .find('.playerName')
-                    .html(App.Host.players[1].playerName);
-
-                // Set the Score section on screen to 0 for each player.
-                $('#player1Score').find('.score').attr('id',App.Host.players[0].mySocketId);
-                $('#player2Score').find('.score').attr('id',App.Host.players[1].mySocketId);
+            $('#player2Score')
+                .find('.playerName')
+                .html(App.Host.players[1].playerName);
+                    $('#player1Score').find('.score').attr('id',App.Host.players[0].mySocketId);
+                    $('#player2Score').find('.score').attr('id',App.Host.players[1].mySocketId);
+                }
+                
             },
 
             /**
@@ -378,11 +402,19 @@ jQuery(function($){
 
             checkMove : function(data){
                 if(data.playerId === IO.socket.id){
-                    this.row = data.row;
-                    this.col = data.col;
+                    App.Player.row = data.row;
+                    App.Player.col = data.col;
                 }
                 pintarUbicacionActualJugador(data.row, data.col ,data.j)
-        },
+            },
+
+            nextLab : function(data){
+                
+            },
+
+            playerWin : function(data){
+                
+            },
 
             /**
              *  Click handler for the "Start Again" button that appears

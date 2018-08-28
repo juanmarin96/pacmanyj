@@ -36,14 +36,17 @@ function hostPrepareGame(data) {
   var sock = this;
   var l1 = new maze.Backtracker(15, 25);
   l1.generate();
-  var l2 = new maze.Backtracker(15, 25);
-  l2.generate();
+  l1.set(23, 13, 2)
+  var l2 = new maze.Backtracker(15, 25)
+  l2 = Object.assign(l2, l1)
+  l2.set(23, 13, 2)
   var data = {
     mySocketId: sock.id,
     gameId: data.id,
     lab1: l1,
     lab2: l2,
-    players: data.players
+    players: data.players,
+    nextRound: data.nextRound
   };
   io.sockets.in(data.gameId).emit('beginNewGame', data);
 }
@@ -88,9 +91,9 @@ function validarMovimientoJugador(data) {
   var rowAux = data.row;
   var colAux = data.col;
   moverIndice(data);
-  if(validarPosicionEnLaberinto(data)){
+  if (validarPosicionEnLaberinto(data)) {
     return data;
-  }else{
+  } else {
     data.row = rowAux;
     data.col = colAux;
     return data;
@@ -98,18 +101,30 @@ function validarMovimientoJugador(data) {
 }
 
 function validarPosicionEnLaberinto(data) {
-    var l1 = new maze.Backtracker(data.lab1.width, data.lab1.height);
-    l1 = Object.assign(l1,data.lab1);
-    var l2 = new maze.Backtracker(data.lab2.width, data.lab2.height);
-    l2 = Object.assign(l2,data.lab2);
+  var l1 = new maze.Backtracker(data.lab1.width, data.lab1.height);
+  l1 = Object.assign(l1, data.lab1);
+  var l2 = new maze.Backtracker(data.lab2.width, data.lab2.height);
+  l2 = Object.assign(l2, data.lab2);
   if (data.j === 1) {
     if (l1.get(data.row, data.col)) {
+      if (l1.get(data.row, data.col) === 2) {
+        data.row = 1;
+        data.col = 1;
+        io.sockets.in(data.gameId).emit('playerWin', data);
+        return true;
+      }
       return true;
     } else {
       return false;
     }
   } else {
     if (l2.get(data.row, data.col)) {
+      if (l2.get(data.row, data.col) === 2) {
+        data.row = 1;
+        data.col = 1;
+        io.sockets.in(data.gameId).emit('playerWin', data);
+        return true;
+      }
       return true;
     } else {
       return false;
