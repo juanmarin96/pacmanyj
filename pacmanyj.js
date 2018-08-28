@@ -1,6 +1,6 @@
 var io;
 var gameSocket;
-
+var maze = require('amazejs');
 
 exports.iniciarJuego = function(sio, socket){
     io = sio;
@@ -30,10 +30,17 @@ function hostCreateNewGame(data){
 
 function hostPrepareGame(gameId) {
   var sock = this;
+  var l1 = new maze.Backtracker(15, 25);
+  l1.generate();
+  var l2 = new maze.Backtracker(15, 25);
+  l2.generate();
   var data = {
       mySocketId : sock.id,
-      gameId : gameId
+      gameId : gameId,
+      lab1 : Object.freeze(l1), 
+      lab2 : Object.freeze(l2)
   };
+  console.log(data.lab1.__proto__)
   io.sockets.in(data.gameId).emit('beginNewGame', data);
 }
 
@@ -48,7 +55,6 @@ function hostNextRound(data){
 function playerJoinGame(data) {
   // A reference to the player's Socket.IO socket object
   var sock = this;
-  console.log(data)
   // Look up the room ID in the Socket.IO manager object.
   var room = io.sockets.adapter.rooms[data.gameId];
 
@@ -68,7 +74,6 @@ function playerJoinGame(data) {
 }
 
 function playerKeyUp(data){
-  console.log(data)
   io.sockets.in(data.gameId).emit('hostCheckMove', data);
 }
 

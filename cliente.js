@@ -474,10 +474,8 @@ jQuery(function($){
             checkMove : function(data){
                 var indexPlayer =  App.Host.players.findIndex(x => x.mySocketId==data.playerId);
                 var codeKey = data.codigoTecla;
-                console.log(data);
-                console.log(App.Host.players);
                 var player = App.Host.players[indexPlayer];
-                console.log(player)
+                console.log(App.Host.players)
                 switch(codeKey){
                     case 38:
                         player.row +=1
@@ -535,11 +533,10 @@ jQuery(function($){
                     var data = {
                         gameId: App.gameId,
                         playerId: App.mySocketId,
-                        codigoTecla: event.code,
-                        row: this.row,
-                        col: this.col
+                        codigoTecla: event.keycode,
+                        row: App.Player.row,
+                        col: App.Player.col
                     };
-                    console.log('env :'+ JSON.stringify(data))
                     IO.socket.emit('playerKeyUp',data);
                 }
             },
@@ -564,9 +561,12 @@ jQuery(function($){
              * @param hostData
              */
             gameCountdown : function(hostData) {
+                console.log("Inicio el juego")
+                var juan = Object.create(hostData.lab1)
+                console.log(juan);
                 App.Player.hostSocketId = hostData.mySocketId;
                 $('#gameArea').html(App.$canvas);
-                inicializarLaberintos();
+                inicializarLaberintos(hostData.lab1, hostData.lab2);
             },
 
             /**

@@ -5,17 +5,15 @@ var ctx1;
 var ctx2;
 var ubicacionActual1 = {r:1,c:1}
 var ubicacionActual2 = {r:1,c:1}
-function inicializarLaberintos(){
+function inicializarLaberintos(lab1,lab2){
+    l1 = new maze.Backtracker(lab1.width, lab1.height);
+    l1 = Object.assign(l1,lab1);
+    l2 = new maze.Backtracker(lab2.width, lab2.height);
+    l2 = Object.assign(l2,lab2);
     var canvas1 = document.getElementById('canvas1');
     var canvas2 = document.getElementById('canvas2');
     ctx1 = canvas1.getContext('2d');
     ctx2 = canvas2.getContext('2d');
-    l1 = new maze.Backtracker(15, 25);
-    l1.generate();
-    l2 = new maze.Backtracker(15, 25);
-    l2.generate();
-    l1.set(1,1,2);
-    l2.set(1,1,2);
     canvas1.width = l1.width * 20;
     canvas1.height = l1.height * 20;
     canvas2.width = l2.width * 20;
@@ -78,6 +76,14 @@ function validarMovimiento(code){
         default:
         event.preventDefault();
     }
+}
+
+function getl(r,c,grid){
+
+}
+
+function setl(r,c,grid,v){
+
 }
 
 
