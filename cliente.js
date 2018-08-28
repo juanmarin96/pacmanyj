@@ -1,6 +1,7 @@
 jQuery(function($){    
     'use strict';
-
+    var interval;
+    var called = false;
     var IO = {
 
         init: function() {
@@ -79,7 +80,6 @@ jQuery(function($){
     };
 
     var App = {
-
         /**
          * Keep track of the gameId, which is identical to the ID
          * of the Socket.IO Room used for the players and host to communicate
@@ -145,7 +145,11 @@ jQuery(function($){
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
             App.$doc.on('click', '#btnPlayerRestart', App.Player.onPlayerRestart);
-            App.$doc.on('keyup','body',App.Player.onPlayerKeyUp);
+            App.$doc.on('keydown','body',App.Player.onPlayerKeyUp);
+            App.$doc.on('keyup','body',function(event){
+                clearInterval(interval); 
+                interval = null;
+            });
         },
 
         /* *************************************
@@ -421,18 +425,24 @@ jQuery(function($){
             },
 
             onPlayerKeyUp: function(event){
-                if(App.myRole === 'Player'){
-                    var data = {
-                        gameId: App.gameId,
-                        playerId: App.mySocketId,
-                        codigoTecla: event.keyCode,
-                        row: App.Player.row,
-                        col: App.Player.col,
-                        j : App.Player.index,
-                        lab1 : App.Player.lab1,
-                        lab2: App.Player.lab2
-                    };
-                    IO.socket.emit('playerKeyUp',data);
+                if(interval == null) {
+                    called = false;
+                    interval = setInterval(function() {
+                        if(App.myRole === 'Player'){
+                            var data = {
+                                gameId: App.gameId,
+                                playerId: App.mySocketId,
+                                codigoTecla: event.keyCode,
+                                row: App.Player.row,
+                                col: App.Player.col,
+                                j : App.Player.index,
+                                lab1 : App.Player.lab1,
+                                lab2: App.Player.lab2
+                            };
+                            IO.socket.emit('playerKeyUp',data);
+                        }
+                        called = true;
+                    }, 100);
                 }
             },
 
@@ -456,11 +466,14 @@ jQuery(function($){
              * @param hostData
              */
             gameCountdown : function(hostData) {
-                var indexPlayer =  hostData.players.findIndex(x => x.mySocketId==IO.socket.id);
+                var indexPlayer = hostData.players.findIndex(x => x.mySocketId==IO.socket.id);
                 App.Player.hostSocketId = hostData.mySocketId;
                 App.Player.lab1 = hostData.lab1;
                 App.Player.lab2 = hostData.lab2;
-                App.Player.index = indexPlayer + 1;
+                App.Player.index = (App.Player.index === 0)?indexPlayer + 1 : App.Player.index;
+                App.Player.row = 1;
+                App.Player.col = 1;
+                reserUbicacionActual()
                 if(!App.Player.end){
                     $('#gameArea').html(App.$canvas);
                     inicializarLaberintos(hostData.lab1, hostData.lab2);

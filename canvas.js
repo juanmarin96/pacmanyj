@@ -58,4 +58,9 @@ function pintarUbicacionActualJugador(r,c,j){
     }
 }
 
+function reserUbicacionActual(){
+    ubicacionActual1 = {r:1,c:1}
+    ubicacionActual2 = {r:1,c:1}
+}
+
 
