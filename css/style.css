@@ -334,3 +334,13 @@ canvas{
 body{
     overflow-y: hidden;
 }
+
+#hostWord{
+    color: #ECFFE0;
+    font-size: 70px;
+}
+
+.gameOver{
+    color: #ECFFE0;
+    font-size: 70px;
+}
